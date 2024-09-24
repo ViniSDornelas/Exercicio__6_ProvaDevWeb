@@ -1,0 +1,45 @@
+const mysql = require('mysql');
+
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'seu_usuario',
+    password: 'sua_senha',
+    database: 'escola'
+});
+
+const gravarAluno = (nome, email) => {
+    const sql = 'INSERT INTO aluno (nome, email) VALUES (?, ?)';
+    connection.query(sql, [nome, email], (error, results) => {
+        if (error) {
+            console.error('Erro ao gravar aluno:', error);
+            return;
+        }
+        console.log('Aluno gravado com sucesso:', results.insertId);
+    });
+};
+
+const buscarAlunos = () => {
+    const sql = 'SELECT id, nome, email FROM aluno';
+    connection.query(sql, (error, results) => {
+        if (error) {
+            console.error('Erro ao buscar alunos:', error);
+            return;
+        }
+        results.forEach(aluno => {
+            console.log(`ID: ${aluno.id}, Nome: ${aluno.nome}, Email: ${aluno.email}`);
+        });
+    });
+};
+
+connection.connect(err => {
+    if (err) {
+        console.error('Erro ao conectar ao banco de dados:', err);
+        return;
+    }
+    console.log('Conectado ao banco de dados MySQL');
+
+    gravarAluno('João Silva', 'joao.silva@example.com');
+    buscarAlunos();
+
+    connection.end();
+});
